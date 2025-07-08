@@ -9,22 +9,39 @@ int main() {
     cin.tie(nullptr);
 
     int n; cin >> n;
-    vi W(n);
+    vi arr(n);
     for (int i=0;i<n;i++)
-        cin >> W[i];
-    set<int> okay;
-    okay.insert(0);
-    for (int i=0;i<n;i++) {
-        set<int> tmp_set;
-        for (auto it=okay.begin(); it!=okay.end(); it++) {
-            tmp_set.insert(*it + W[i]);
-            tmp_set.insert(*it - W[i]);
+        cin >> arr[i];
+    
+    if (n == 1) {
+        cout << arr[0];
+        return 0;
+    }    
+
+    int offset = 0, median = min(arr[0], arr[1]), next_median = max(arr[0], arr[1]);
+    cout << median << '\n' << median << '\n';
+    for (int i=2;i<n;i++) {
+        if (i%2) {
+            // 1 (5) 10 <- 3
+            if (median >= arr[i]) {
+                next_median = median;
+                median = arr[i];
+            } else if (next_median > arr[i]) { // 1 (2) 10 <- 5
+                next_median = arr[i];
+            }
+        } else {
+            if (median <= arr[i]) {
+                if (next_median >= arr[i]) { 
+                    // 1 (3) [5] 7 <- 4
+                    median = arr[i];
+                } else {
+                    // 1 (3) [5] 7 <- 6
+                    median = next_median;
+                    next_median = arr[i];
+                }
+            }
         }
-        okay.insert(tmp_set.begin(), tmp_set.end());
-    }
-    int m; cin >> m;
-    for (int i=0;i<m;i++) {
-        int w; cin >> w;
-        cout << (okay.count(w) > 0 ? 'Y' : 'N') << ' ';
+
+        cout << median << '\n';
     }
 }
